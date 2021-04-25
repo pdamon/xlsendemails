@@ -166,8 +166,9 @@ def make_email(news, watchlist, name, comments, pictures, pic_comments):
         th,
         td {
           padding: 2px;
-          border: 1px solid black;
-          border-collapse: collapse;
+          border: none;
+          /* border: 1px solid black;
+          border-collapse: collapse; */
         }
       </style>
         """)
@@ -180,7 +181,8 @@ def make_email(news, watchlist, name, comments, pictures, pic_comments):
 
         # make the market news
         with div():
-            h4("Interest List Broker Notes {}".format(datetime.now().strftime("%m/%d/%Y")))
+            h4(datetime.now().strftime("%m/%d/%Y"))
+            h4("Interest List Broker Notes. Let us know if you need us to track down a note(s) for you")
             with table() as t:
                 my_tr = tr()
                 # make the header row
