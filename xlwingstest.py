@@ -11,7 +11,7 @@ import win32com as win32
 
 def process_news():
     wb = xw.Book.caller()
-    # wb = xw.Book('../researchpyxll.xlsm')
+    # wb = xw.Book('../researchpyxll3.xlsm')
 
     # get data
     sht = wb.sheets['RAW DATA']
@@ -35,17 +35,20 @@ def process_news():
         if len(df) > 0:
             df = df.sort_values(['Date'])
             df['Link'] = df['Bloomberg Link'].apply(lambda x: 'bbg://news/stories/{}'.format(x.split(" ")[1]))
-            df['hl_int'] = df['Headline']
-            df['Headline'] = df.apply(lambda x: '=HYPERLINK("{}", "{}")'.format('bbg://news/stories/{}'.format(x['Bloomberg Link'].split(" ")[1]), x['Headline']), axis=1)
+            # df['hl_int'] = df['Headline']
+            # df['Headline'] = df.apply(lambda x: '=HYPERLINK("{}", "{}")'.format('bbg://news/stories/{}'.format(x['Bloomberg Link'].split(" ")[1]), x['Headline']), axis=1)
 
-            df = df[['Primary Tickers', 'Headline', 'Broker', 'Bloomberg Link', 'Link', 'hl_int']]
+            # df = df[['Primary Tickers', 'Headline', 'Broker', 'Bloomberg Link', 'Link', 'hl_int']]
+            df = df[['Primary Tickers', 'Headline', 'Broker', 'Bloomberg Link', 'Link']]
+
+            df = df.sort_values(["Primary Tickers", "Broker"])
 
             sht = wb.sheets[client]
 
             sht.range('A1').options(index=False).value = df
             sht.autofit()
 
-            prev = client
+        prev = client
 
 
 def str_to_series(x):
@@ -90,7 +93,7 @@ def make_subject_line(news):
 
 def send_emails():
     wb = xw.Book.caller()
-    # wb = xw.Book("../researchpyxll.xlsm")
+    # wb = xw.Book("../researchpyxll3.xlsm")
     sht = wb.sheets['Email List']
 
     clients = sht.range('A1:C1000').options(pd.DataFrame, index=False).value.dropna()
@@ -102,7 +105,7 @@ def send_emails():
 def create_email(wb, client, addr, send):
     # get the news for the client
     sht = wb.sheets[client]
-    data = sht.range('A1:F1000').options(pd.DataFrame, index=False).value.dropna()
+    data = sht.range('A1:E1000').options(pd.DataFrame, index=False).value.dropna()
 
     # get the client's watchlist
     sht = wb.sheets['INTEREST LIST']
@@ -146,13 +149,22 @@ def make_email(news, watchlist, name, comments, pictures, pic_comments):
     # make the document
     doc = dominate.document(title='Email')
 
+    # *{
+    #     font - family: Arial, Helvetica, sans - serif !important;
+    # color: black;
+    # }
+
     with doc.head:
         raw("""
         <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif !important;
+            color: black;
+        }
         table,
         th,
         td {
-          padding: 10px;
+          padding: 2px;
           border: 1px solid black;
           border-collapse: collapse;
         }
@@ -210,6 +222,6 @@ def make_email(news, watchlist, name, comments, pictures, pic_comments):
 
 
 if __name__ == "__main__":
-    process_news()
+    # process_news()
     # create_email("APD", "parker.damon32@gmail.com")
-    # send_emails()
+    send_emails()
