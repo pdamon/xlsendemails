@@ -1,6 +1,7 @@
 import xlwings as xw
 import pandas as pd
 from re import match
+from datetime import datetime
 
 import dominate
 from dominate.tags import *
@@ -179,7 +180,7 @@ def make_email(news, watchlist, name, comments, pictures, pic_comments):
 
         # make the market news
         with div():
-            h4("Interest List Broker Notes")
+            h4("Interest List Broker Notes {}".format(datetime.now().strftime("%m/%d/%Y")))
             with table() as t:
                 my_tr = tr()
                 # make the header row
